@@ -9,5 +9,5 @@ COPY /conf/host.bobby.conf /etc/nginx/conf.d/
 # 设置nginx容器监听8849
 EXPOSE 8849
 # 启动容器后自动启动nginx 服务
-ENTRYPOINT service nginx start && /bin/sh
+# ENTRYPOINT service nginx start && top && /bin/sh
 # CMD ["service","nginx","start"]
