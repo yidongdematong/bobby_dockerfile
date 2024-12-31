@@ -1,4 +1,4 @@
-FROM mysql:8.0
+FROM mysql:latest
 MAINTAINER "bobby#yidongdematong@163.com"
 
 # 数据库初始化脚本

@@ -2,15 +2,15 @@ version: "v2.23.3-desktop.2"
 services:
   portal_nginx:
     container_name: portal_nginx
-  # build-指定Dockerfile所在文件夹的路径。Compose将会利用他自动构建这个镜像，然后使用这个镜像。 build: ./dir
+    # build-指定Dockerfile所在文件夹的路径。Compose将会利用他自动构建这个镜像，然后使用这个镜像。 build: ./dir
     build:
-    #   上下文路径
-        context: ./nginx
-        #  指定构建镜像的 Dockerfile 文件名
-        dockerfile: Dockerfile
+      #   上下文路径
+      context: ./nginx
+      #  指定构建镜像的 Dockerfile 文件名
+      dockerfile: Dockerfile
     #暴露端口信息。格式 (HOST:CONTAINER)
-    ports: 
-        - "40000:8849"
+    ports:
+      - "40000:8849"
     links:
       - java_server
     networks:
@@ -18,45 +18,47 @@ services:
     depends_on:
       - java_server
   java_server:
-      container_name: java_server
-      build:
-        context: ./server
-        dockerfile: Dockerfile
-      ports: 
-        - "40001:8850"
-      depends_on:
-          - data_mysql
-          - redis_server
-      links:
-          - data_mysql
-          - redis_server
-      networks:
-          - ruoyi_network
-            
+    container_name: java_server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "40001:8850"
+    depends_on:
+      - data_mysql
+      - redis_server
+    links:
+      - data_mysql
+      - redis_server
+    networks:
+      - ruoyi_network
+
   data_mysql:
-      container_name: data_mysql
-      build:
-        context: ./mysql
-        dockerfile: Dockerfile
-      environment:
-        MYSQL_ROOT_PASSWORD: asd7667330!
-        MYSQL_ROOT_HOST: '%'
-      expose: 
-        - "3306"
-        - "33060"
-      networks:
-          - ruoyi_network
+    container_name: data_mysql
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: asd7667330!
+      MYSQL_ROOT_HOST: "%"
+    ports:
+      - "40004:3306"
+    expose:
+      - "3306"
+      - "33060"
+    networks:
+      - ruoyi_network
   redis_server:
-        container_name: redis_server
-        build:
-          context: ./redis
-          dockerfile: Dockerfile
-        ports: 
-          - "40003:6379"
-        expose: 
-          - "6379"
-        networks:
-           - ruoyi_network
+    container_name: redis_server
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    ports:
+      - "40003:6379"
+    expose:
+      - "6379"
+    networks:
+      - ruoyi_network
 networks:
-    ruoyi_network:
-        driver: bridge
+  ruoyi_network:
+    driver: bridge

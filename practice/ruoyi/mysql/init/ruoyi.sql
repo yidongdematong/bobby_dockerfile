@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS db_ruoiyi;
+/*!40101 SET NAMES utf8 */; 
+CREATE DATABASE IF NOT EXISTS db_ruoiyi default character set utf8mb4 collate utf8mb4_unicode_ci;
 USE db_ruoiyi;
 
 -- ----------------------------
