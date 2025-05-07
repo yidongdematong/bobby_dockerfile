@@ -1,0 +1,40 @@
+# version: "3.8"
+services:
+  web_service_nginx1:
+    container_name: web_service_nginx1
+    # build-指定Dockerfile所在文件夹的路径。Compose将会利用他自动构建这个镜像，然后使用这个镜像。 build: ./dir
+    build:
+      #   上下文路径
+      context: ./web1
+      #  指定构建镜像的 Dockerfile 文件名
+      dockerfile: Dockerfile
+    #暴露端口信息。格式 (HOST:CONTAINER)
+    ports:
+      - "40005:9981"
+    networks:
+      - nginx_load_network
+  web_service_nginx2:
+    container_name: web_service_nginx2
+    build:
+      context: ./web2
+      dockerfile: Dockerfile
+    ports:
+      - "40006:9982"
+    networks:
+      - nginx_load_network
+
+  load_balance_nginx:
+    container_name: load_balance_nginx
+    build:
+      context: ./loadbalance
+      dockerfile: Dockerfile
+    ports:
+      - "40007:9983"
+    depends_on:
+      - web_service_nginx1
+      - web_service_nginx2
+    networks:
+      - nginx_load_network
+networks:
+  nginx_load_network:
+    driver: bridge
