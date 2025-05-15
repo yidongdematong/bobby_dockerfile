@@ -2,12 +2,8 @@
 
 学习研究积累
 
-## 尝试容器部署开源项目-ruoyi
+### 容器部署开源项目-ruoyi
 
-### 前端部署 nginx
+### nginx 负载均衡模拟
 
-### 服务器端 server
-
-### 数据库 mysql
-
-### 缓存 redis
+### 制作 alpine-jre-gitblit 镜像
