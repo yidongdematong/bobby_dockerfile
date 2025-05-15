@@ -1,0 +1,35 @@
+# 使用 Alpine Linux 作为基础镜像
+FROM alpine:3.18
+LABEL author="wangh"\
+      email="yidongdematong@163.com"\
+    env.alpine="3.18" env.openjdk-jre="8" env.gitblit="1.9.3"
+# 安装 OpenJDK 1.8 和必要的工具
+RUN apk add --no-cache \
+    openjdk8-jre 
+   
+
+# # 下载 Gitblit 1.9.3
+RUN  apk update && apk add --no-cache ca-certificates && update-ca-certificates && wget -O /tmp/gitblit-1.9.3.tar.gz \
+    https://github.com/gitblit/gitblit/releases/download/v1.9.3/gitblit-1.9.3.tar.gz && \
+    tar -xzf /tmp/gitblit-1.9.3.tar.gz -C /opt && \
+    rm /tmp/gitblit-1.9.3.tar.gz && \
+    mv /opt/gitblit-1.9.3 /opt/gitblit
+
+# # 创建 Gitblit 数据目录结构
+RUN mkdir -p /opt/data 
+
+# # 复制默认配置文件和初始代码仓库
+COPY config/gitblit.properties /opt/gitblit/data/
+# # COPY repositories/ /opt/gitblit/data/repositories/
+
+# # 暴露端口
+EXPOSE 8080 8443 29418
+
+# # 设置工作目录
+WORKDIR /opt/gitblit
+
+CMD ["java", "-cp", "/opt/gitblit/gitblit.jar:/opt/gitblit/ext/*", "com.gitblit.GitBlitServer", "--baseFolder", "/opt/gitblit/data"]
+
+
+
+
