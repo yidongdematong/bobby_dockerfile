@@ -7,3 +7,5 @@
 ### [nginx 负载均衡模拟](./practice/nginx/docker-compose.yml)
 
 ### [制作 alpine-jre-gitblit 镜像](./practice/gitblit/dockerfile/dockerfile)
+
+### mysql 主从同步
