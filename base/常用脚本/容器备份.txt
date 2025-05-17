@@ -1,0 +1,38 @@
+@echo off
+REM 每天凌晨自动备份docker容器localcodeserver为镜像并导出，通过设置系统定时任务完成定时备份
+title 基于容器制作新的镜像工具-bobby
+REM 设置变量
+echo 请输入想备份导出的容器名称：
+set /p container_name=
+set CONTAINER_NAME=%container_name%
+set IMAGE_NAME=localcodeserver_backup
+echo 请输入备份文件存放地址：
+set /p  backup_dir=
+set BACKUP_DIR=%backup_dir%
+set DATE=%date:~0,4%%date:~5,2%%date:~8,2%
+set TIMESTAMP=%time:~0,2%%time:~3,2%%time:~6,2%
+set TIMESTAMP=%TIMESTAMP: =0%
+set BACKUP_FILENAME=%IMAGE_NAME%_%DATE%_%TIMESTAMP%.tar
+
+REM 创建备份目录（如果不存在）
+
+if not exist "%BACKUP_DIR%" (
+    mkdir "%BACKUP_DIR%"
+)
+
+REM 提交容器为新镜像
+echo 正在提交容器 %CONTAINER_NAME% 为新镜像 %IMAGE_NAME%:%DATE% ...
+docker commit %CONTAINER_NAME% %IMAGE_NAME%:%DATE%
+
+REM 导出镜像到文件
+echo 正在导出镜像到 %BACKUP_DIR%\%BACKUP_FILENAME% ...
+docker save -o "%BACKUP_DIR%\%BACKUP_FILENAME%" %IMAGE_NAME%:%DATE%
+
+echo 备份完成: %BACKUP_DIR%\%BACKUP_FILENAME%
+
+REM 删除临时镜像
+REM echo 正在删除临时镜像 %IMAGE_NAME%:%DATE% ...
+docker rmi %IMAGE_NAME%:%DATE%
+
+pause
+exit

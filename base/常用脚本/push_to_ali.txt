@@ -1,0 +1,118 @@
+@echo off
+title 本地镜像推送至阿里云个人仓库-bobby
+REM 推送本地Docker镜像到阿里云个人仓库脚本
+REM 使用方法: putsh_to_ali.bat [本地镜像名] [版本标签] [阿里云仓库命名空间] [阿里云镜像名]
+
+REM 参数检查
+if "%1"=="" (
+    echo 错误: 请指定本地镜像名称
+    echo 用法: %0 [本地镜像名] [版本标签] [阿里云命名空间] [阿里云镜像名]
+    echo 示例: %0 myapp 1.0.0 mynamespace myrepo
+    exit /b 1
+)
+
+if "%2"=="" (
+    set TAG=latest
+) else (
+    set TAG=%2
+)
+
+if "%3"=="" (
+    set ALIYUN_NAMESPACE=你的默认命名空间
+) else (
+    set ALIYUN_NAMESPACE=%3
+)
+
+if "%4"=="" (
+    set ALIYUN_REPO=%1
+) else (
+    set ALIYUN_REPO=%4
+)
+
+REM 设置阿里云Docker仓库地址
+set ALIYUN_REGISTRY=registry.cn-hangzhou.aliyuncs.com
+
+REM 组合完整的目标镜像名称
+set TARGET_IMAGE=%ALIYUN_REGISTRY%/%ALIYUN_NAMESPACE%/%ALIYUN_REPO%:%TAG%
+
+echo.
+echo 正在将本地镜像 %1:%TAG% 推送到阿里云仓库 %TARGET_IMAGE%
+echo.
+
+REM 步骤1: 登录阿里云Docker Registry（
+echo 正在登录阿里云Docker Registry...
+docker login --username=yidongdematong@163.com  %ALIYUN_REGISTRY%
+
+if %ERRORLEVEL% neq 0 (
+    echo 错误: Docker登录失败
+    exit /b 1
+)
+
+REM 步骤2: 标记本地镜像
+echo 正在标记镜像...
+docker tag %1:%TAG% %TARGET_IMAGE%
+
+if %ERRORLEVEL% neq 0 (
+    echo 错误: 镜像标记失败
+    exit /b 1
+)
+
+REM 步骤3: 推送镜像
+echo 正在推送镜像到阿里云仓库...
+docker push %TARGET_IMAGE%
+
+if %ERRORLEVEL% neq 0 (
+    echo 错误: 镜像推送失败
+    exit /b 1
+)
+
+REM 步骤4: 清理本地标记
+set /p CLEANUP="是否删除本地标记的镜像?(y/n) "
+if /i "%CLEANUP%"=="y" (
+    echo 正在删除本地标记的镜像...
+    docker rmi %TARGET_IMAGE%
+)
+
+echo.
+echo 镜像推送完成!
+echo 阿里云镜像地址: %TARGET_IMAGE%
+
+pause
+
+
+
+
+===================执行记录=======================
+D:\docker_data\tongxin\codeserver>push_to_ali.bat
+错误: 请指定本地镜像名称
+用法: push_to_ali.bat [本地镜像名] [版本标签] [阿里云命名空间] [阿里云镜像名]
+示例: push_to_ali.bat myapp 1.0.0 mynamespace myrepo
+
+D:\docker_data\tongxin\codeserver>push_to_ali.bat mongo latest bobby_dockerfile mongo
+
+正在将本地镜像 mongo:latest 推送到阿里云仓库 registry.cn-hangzhou.aliyuncs.com/bobby_dockerfile/mongo:latest
+
+正在登录阿里云Docker Registry...
+Password:
+
+Login Succeeded
+正在标记镜像...
+正在推送镜像到阿里云仓库...
+The push refers to repository [registry.cn-hangzhou.aliyuncs.com/bobby_dockerfile/mongo]
+e0109516f378: Pushed
+a72b6f80fa6c: Pushed
+5bb37e3368cb: Pushed
+469b4f91f157: Pushed
+657c83d65d00: Pushed
+9d8a3355331b: Pushed
+1fb6f48a4de7: Pushed
+a46a5fb872b5: Pushed
+latest: digest: sha256:3cd6856b5de74aba9a0209e5e9002808014e241bbf996edb6cc2c4691f805fe2 size: 1994
+是否删除本地标记的镜像?(y/n) y
+正在删除本地标记的镜像...
+Untagged: registry.cn-hangzhou.aliyuncs.com/bobby_dockerfile/mongo:latest
+Untagged: registry.cn-hangzhou.aliyuncs.com/bobby_dockerfile/mongo@sha256:3cd6856b5de74aba9a0209e5e9002808014e241bbf996edb6cc2c4691f805fe2
+
+镜像推送完成!
+阿里云镜像地址: registry.cn-hangzhou.aliyuncs.com/bobby_dockerfile/mongo:latest
+请按任意键继续. . .
