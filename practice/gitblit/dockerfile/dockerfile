@@ -27,6 +27,7 @@ EXPOSE 8080 8443 29418
 
 # # 设置工作目录
 WORKDIR /opt/gitblit
+VOLUME ["/var/opt/gitblit"]
 
 CMD ["java", "-cp", "/opt/gitblit/gitblit.jar:/opt/gitblit/ext/*", "com.gitblit.GitBlitServer", "--baseFolder", "/opt/gitblit/data"]
 

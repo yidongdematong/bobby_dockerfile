@@ -1,0 +1,5 @@
+FROM bobbywong/ubuntu-py:0.0.0.4
+MAINTAINER bobby<yidongdematong@163.com>
+COPY ./data/wangh/ /home/wangh/
+EXPOSE 22 9986 9987 9985
+CMD ["/bin/bash"] 

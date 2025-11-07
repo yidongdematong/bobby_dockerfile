@@ -7,7 +7,7 @@ docker build -t alpine-jre-gitblit:latest .
 
 ### 运行
 
-docker run -it --name xxx -P alpine-jre-gitblit:latest
+docker run -it --name localcodeserver -v hostPath:/var/opt/gitblit -P alpine-jre-gitblit:latest
 
 ### 其他配置
 
@@ -18,7 +18,7 @@ docker run -it --name xxx -P alpine-jre-gitblit:latest
 ```
 #
 # 指定仓库目录
-git.repositoriesFolder = /opt/data
+git.repositoriesFolder = /opt/gitblit/data
 
 # http访问
 server.httpPort = 8080
